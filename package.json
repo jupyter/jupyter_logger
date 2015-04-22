@@ -1,0 +1,42 @@
+{
+  "name": "jupyter-logger",
+  "version": "0.1.0",
+  "description": "Log Jupyter notebook user actions.",
+  "author": "Jonathan Frederic <jon.freder@gmail.com>",
+  "bin": {
+    "jupyter-logger": "./build/server/server.js"
+  },
+  "scripts": {
+    "start": "node ./build/server/server.js",
+    "predeploy": "gulp"
+  },
+  "keywords": [
+    "jupyter",
+    "notebook",
+    "log",
+    "logger",
+    "ux",
+    "data",
+    "keyboard",
+    "clicks",
+    "actions"
+  ],
+  "dependencies": {
+    "node-core-audio": "*",
+    "mime": "*",
+    "es6-promise": "*",
+    "query-string": "*",
+    "node-getopt": "~0.2.3"
+  },
+  "devDependencies": {
+    "gulp": "*",
+    "gulp-typescript": "*",
+    "gulp-insert": "*",
+    "typescript": "1.5.0-alpha",
+    "merge2": "*",
+    "tsd": "*"
+  },
+  "preferGlobal": true,
+  "private": true,
+  "license": "MIT"
+}
