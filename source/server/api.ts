@@ -39,7 +39,7 @@ export class API {
     /**
      * Registers a client with the server.
      */
-    public client(request: http.IncomingMessage): Promise<string> {
+    public client(request: http.IncomingMessage): Promise<any> {
         return requests.get_payload(request).then(data => {
             var params = JSON.parse(data);
             // id, opt_in, sex
