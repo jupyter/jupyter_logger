@@ -13,8 +13,8 @@ export class Mongo {
     private _url: string = 'mongodb://localhost:27017/jupyterlogger';
     private _timeout: number = 10; // s
     private _db: Promise<any>;
-    private _db_resolve;
-    private _db_reject;
+    private _db_resolve: (...args: any[])=>any;
+    private _db_reject: (...args: any[])=>any;
     private _connected: boolean = false;
     private _connection_timer: NodeJS.Timer = null;
 
@@ -24,7 +24,10 @@ export class Mongo {
         this._reset();
     }
 
-    public get_db() {
+    /**
+     * Gets an active database connection.
+     */
+    public get_db(): Promise<any> {
         if (this._connection_timer) clearTimeout(this._connection_timer);
         this._connection_timer = setTimeout(() => { this._disconnect; }, this._timeout*1000);
 
@@ -32,7 +35,12 @@ export class Mongo {
         return this._db;
     }
 
-    public db_insert(name, x) {
+    /**
+     * Inserts an entry into a datbase collection (by name).
+     * @param name - name of the collection
+     * @param x - item to insert
+     */
+    public db_insert(name: string, x: any): Promise<any> {
         return this.get_db().then(db => {
             var collection = db.collection(name);
             return new Promise((resolve, reject) => {           
@@ -47,7 +55,16 @@ export class Mongo {
         });
     }
 
-    public db_find(name, x): Promise<any[]> {
+    /**
+     * Find the entries that match a dictionary of parameters in a collection (by name)
+     * @param name - name of the collection
+     * @param x - item to find.  The matching alogrithm doesn't require the
+     *            item to be described in full.  i.e. if the item you are looking
+     *            for is {a: 1, b: 2, c: 3}, it would be okay to specify
+     *            {b: 2}, the algorithm would find the value, but also other
+     *            values that share b==2.
+     */
+    public db_find(name: string, x: any): Promise<any[]> {
         return this.get_db().then(db => {
             var collection = db.collection(name);
             return new Promise((resolve, reject) => {           
@@ -62,7 +79,10 @@ export class Mongo {
         });
     }
 
-    private _connect() {
+    /** 
+     * Connects to the db
+     */
+    private _connect(): void {
         if (this._connected) return;
         this._connected = true;
 
@@ -79,7 +99,10 @@ export class Mongo {
         });
     }
 
-    private _disconnect() {
+    /**
+     * Disconnects from the db
+     */
+    private _disconnect(): void {
         if (this._connected) {
             this._print("Disconnecting from mongod...");
             this._db.then(db => {
@@ -90,6 +113,9 @@ export class Mongo {
         }
     }
 
+    /**
+     * Resets the connection to the db
+     */
     private _reset(): void {
         this._connected = false;
         this._db = new Promise((resolve, reject) => {
@@ -98,6 +124,9 @@ export class Mongo {
         });
     }
 
+    /**
+     * Print utility
+     */
     private _print(...args): void {
         console.log(chalk.blue('mongod'), ...args);
     }
