@@ -5,12 +5,15 @@
 import mongo = require("./mongo");
 import requests = require("./requests");
 import chalk = require('chalk');
+import i_auth = require("./auth/i_auth");
 import http = require("http"); // Types only
 
 export class API {
     private _mongo: mongo.Mongo;
+    private _auth: i_auth.IAuth;
 
-    public constructor() {
+    public constructor(auth: i_auth.IAuth) {
+        this._auth = auth;
         this._mongo = new mongo.Mongo();
     }
 

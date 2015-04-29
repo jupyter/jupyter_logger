@@ -7,6 +7,9 @@ import http = require("http");
 import api_host = require("./api_host");
 import api = require("./api");
 import config = require("./config");
+import auth_mod = require("./auth/init");
+import promise_mod = require('es6-promise');
+var Promise = promise_mod.Promise;
 
 // Load configurables.
 import mongo = require("./mongo");
@@ -14,19 +17,22 @@ import mongo = require("./mongo");
 // Add configurables.
 var port = config.parser.register('port', 'Port to listen on', 'p', 8989);
 var version = config.parser.register('version', 'Show version', 'v');
+var auth = config.parser.register('auth', `Authentification class.  If you 
+    specifiy a value other than a builtin value, the class is dynamically
+    loaded using require.`, 'a', 'NoAuth');
 config.parser.register('help', 'Display this help', 'h');
 
 // Print version and exit if requested
-version.then(version => {
+Promise.all([version, port, auth]).then((values: any[]) => {
+    [version, port, auth] = values;
     if (version) {
         console.log("0.1.0")
     } else {
 
         // Launch the server
-        port.then(port => {
-            http.createServer(api_host.host(new api.API())).listen(port);
-            console.log("Server running at\n  => http://localhost:" + port + "/\nCTRL + C to shutdown");
-        });
+        var auth_instance = auth_mod.load(auth);        
+        http.createServer(api_host.host(new api.API(auth_instance))).listen(port);
+        console.log("Server running at\n  => http://localhost:" + port + "/\nCTRL + C to shutdown");
     }
 });
 

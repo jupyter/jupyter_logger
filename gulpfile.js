@@ -21,13 +21,13 @@ gulp.task('watch', function() {
  * Transpile typescript to javascript.
  */
 gulp.task('typescript', [], function() {
-    var tsClientResult = gulp.src('./source/client/*.ts')
+    var tsClientResult = gulp.src('./source/client/**/*.ts')
        .pipe(ts({
             typescript: require('typescript'),
             target: 'ES5',
             module: 'amd',
        }));
-    var tsServerResult = gulp.src('./source/server/*.ts')
+    var tsServerResult = gulp.src('./source/server/**/*.ts')
        .pipe(ts({
             typescript: require('typescript'),
             target: 'ES5',
