@@ -2,9 +2,10 @@
 // Distributed under the terms of the Modified BSD License.
 
 /// <reference path="typings/tsd.d.ts" />
-import promise_polyfill = require('es6-promise');
+import promise_mod = require('es6-promise');
 import requests = require("./requests");
 import http = require("http"); // Types only
+var Promise = promise_mod.Promise;
 
 interface IRequestListener {
     (

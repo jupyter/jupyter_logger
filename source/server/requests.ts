@@ -6,8 +6,9 @@
 import url = require("url");
 import path = require("path");
 import query_string = require('query-string');
-import promise_mode = require('es6-promise');
+import promise_mod = require('es6-promise');
 import http = require("http"); // Types only
+var Promise = promise_mod.Promise;
 
 export var parse_url = function(request: http.IncomingMessage): url.Url {
     return url.parse(request.url);

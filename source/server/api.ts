@@ -10,8 +10,8 @@ import http = require("http"); // Types only
 export class API {
     private _mongo: mongo.Mongo;
 
-    public constructor(mongo_address: string, mongo_port: number) {
-        this._mongo = new mongo.Mongo(mongo_address, mongo_port);
+    public constructor() {
+        this._mongo = new mongo.Mongo();
     }
 
     /**

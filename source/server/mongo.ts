@@ -6,11 +6,14 @@ import assert = require('assert');
 import chalk = require('chalk');
 import promise_mod = require('es6-promise');
 import mongodb_mod = require('mongodb');
+import config = require("./config");
+var Promise = promise_mod.Promise;
 
 var MongoClient = mongodb_mod.MongoClient;
 
+var url = config.parser.register('mongourl=ARG', 'URL of the mongod service.', undefined, 'mongodb://localhost:27017/jupyterlogger');
+
 export class Mongo {
-    private _url: string = 'mongodb://localhost:27017/jupyterlogger';
     private _timeout: number = 10; // s
     private _db: Promise<any>;
     private _db_resolve: (...args: any[])=>any;
@@ -18,9 +21,7 @@ export class Mongo {
     private _connected: boolean = false;
     private _connection_timer: NodeJS.Timer = null;
 
-    public constructor(address: string='localhost', port: number=27017) {
-        // Connection URL
-        this._url = 'mongodb://' + address + ':' + String(port) + '/jupyterlogger';
+    public constructor() {
         this._reset();
     }
 
@@ -88,14 +89,16 @@ export class Mongo {
 
         // Use connect method to connect to the Server
         this._print("Connecting to mongod...");
-        MongoClient.connect(this._url, function(err, db) {
-            if (err) {
-                this._connected = false;
-                this._db_reject(err);
-            } else {
-                this._print("Connected to mongod");
-                this._db_resolve(db);
-            }
+        url.then(url => {
+            MongoClient.connect(url, function(err, db) {
+                if (err) {
+                    this._connected = false;
+                    this._db_reject(err);
+                } else {
+                    this._print("Connected to mongod");
+                    this._db_resolve(db);
+                }
+            });
         });
     }
 
