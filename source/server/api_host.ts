@@ -25,7 +25,9 @@ export var host = function(api: any, unhandled?: IRequestListener): IRequestList
     return (request: http.IncomingMessage, response: http.ServerResponse): any => {
         
         // If a method is defined in the API, call it.
-        var method = requests.get_uri(request).substring(1);
+        // Only look at the last segment of the URL.
+        var path = requests.get_uri(request).substring(1).split('/');
+        var method = path[path.length-1];
         if (api[method] !== undefined)  {
 
             // Resolve the return of the method.  This allows API methods to
@@ -46,6 +48,7 @@ export var host = function(api: any, unhandled?: IRequestListener): IRequestList
         
         // If no "unhandled" handler was specified, throw an error.
         } else {
+            console.log(method);
             requests.error_response(response, 501, "Not Implemented\n");
         }
     };

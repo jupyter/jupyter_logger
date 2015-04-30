@@ -10,12 +10,12 @@ var to_export: any = {
     NoAuth: noauth.NoAuth,
     HubAuth: hubauth.HubAuth
 };
-to_export.load = function(name: string): i_auth.IAuth {
+to_export.load = function(name: string, port: number): i_auth.IAuth {
     // If the auth isn't intrinsic, dynamically load it.
     if (to_export[name]===undefined) {
-        return <i_auth.IAuth><any>(new (<any>require(name))());
+        return <i_auth.IAuth><any>(new (<any>require(name))(port));
     } else {
-        return <i_auth.IAuth><any>(new to_export[name]());
+        return <i_auth.IAuth><any>(new to_export[name](port));
     }
 };
 

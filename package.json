@@ -26,7 +26,8 @@
     "mime": "*",
     "es6-promise": "*",
     "query-string": "*",
-    "node-getopt": "~0.2.3"
+    "node-getopt": "~0.2.3",
+    "cookies": "*"
   },
   "devDependencies": {
     "gulp": "*",

@@ -20,13 +20,13 @@ class ArgParser {
         if (this._parsed) {
             throw new Error('Cannot register a config argument after config.parser.parse()');
         }
-
         this._options.push([alias, name, help]);
+        var name_left = name.split('=')[0];
         var promise = new Promise((resolve, reject) => {
-            this._resolutions[name] = resolve;
+            this._resolutions[name_left] = resolve;
         });
-        this._promises[name] = promise;
-        this._defaults[name] = default_value;
+        this._promises[name_left] = promise;
+        this._defaults[name_left] = default_value;
         return promise;
     };
 
@@ -41,7 +41,7 @@ class ArgParser {
             this._parsed = true;
 
             for (var i: number = 0; i < this._options.length; i++) {
-                var name: string = this._options[i][1];
+                var name: string = this._options[i][1].split('=')[0];
                 var resolve = this._resolutions[name];
                 if (opt[name] === undefined) {
                     resolve(this._defaults[name]);

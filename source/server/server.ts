@@ -15,9 +15,9 @@ var Promise = promise_mod.Promise;
 import mongo = require("./mongo");
 
 // Add configurables.
-var port = config.parser.register('port', 'Port to listen on', 'p', 8989);
+var port = config.parser.register('port=ARG', 'Port to listen on', 'p', 8989);
 var version = config.parser.register('version', 'Show version', 'v');
-var auth = config.parser.register('auth', `Authentification class.  If you 
+var auth = config.parser.register('auth=ARG', `Authentification class.  If you 
     specifiy a value other than a builtin value, the class is dynamically
     loaded using require.`, 'a', 'NoAuth');
 config.parser.register('help', 'Display this help', 'h');
@@ -30,7 +30,7 @@ Promise.all([version, port, auth]).then((values: any[]) => {
     } else {
 
         // Launch the server
-        var auth_instance = auth_mod.load(auth);        
+        var auth_instance = auth_mod.load(auth, port);        
         http.createServer(api_host.host(new api.API(auth_instance))).listen(port);
         console.log("Server running at\n  => http://localhost:" + port + "/\nCTRL + C to shutdown");
     }

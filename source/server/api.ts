@@ -7,6 +7,8 @@ import requests = require("./requests");
 import chalk = require('chalk');
 import i_auth = require("./auth/i_auth");
 import http = require("http"); // Types only
+import promise_mod = require('es6-promise');
+var Promise = promise_mod.Promise;
 
 export class API {
     private _mongo: mongo.Mongo;
@@ -40,25 +42,39 @@ export class API {
     }
 
     /**
+     * Check if this client is autheticated.
+     */
+    public auth(request: http.IncomingMessage): Promise<any> {
+        this._log_http(request, 'auth');
+        return this._auth.authenticated(request).then(valid => {
+            return valid ? 'yes' : 'no';
+        });
+    }
+
+    /**
      * Registers a client with the server.
      */
     public client(request: http.IncomingMessage): Promise<any> {
-        return requests.get_payload(request).then(data => {
-            var params = JSON.parse(data);
-            // id, opt_in, sex
-            this._log_http(request, 'client', chalk.yellow(params.id));
-            return this._mongo.db_find('clients', { id: params.id }).then(clients => {
-                if (clients.length > 0) {
-                    this._log_http(request, 'client', 'exists');
-                    return 'ok';
-                } else {
-                    this._log_http(request, 'client', 'inserted');
-                    return this._mongo.db_insert('clients', {
-                        id: params.id,
-                        sex: params.sex,
-                    }).then(()=>'ok');
-                }
-            }).catch(err=>this._log(chalk.bgRed(String(err))));
+        return this._auth.authenticated(request).then((valid: boolean): Promise<any> => { 
+            if (!valid) return Promise.resolve('ok');
+
+            return requests.get_payload(request).then(data => {
+                var params = JSON.parse(data);
+                // id, opt_in, sex
+                this._log_http(request, 'client', chalk.yellow(params.id));
+                return this._mongo.db_find('clients', { id: params.id }).then(clients => {
+                    if (clients.length > 0) {
+                        this._log_http(request, 'client', 'exists');
+                        return 'ok';
+                    } else {
+                        this._log_http(request, 'client', 'inserted');
+                        return this._mongo.db_insert('clients', {
+                            id: params.id,
+                            sex: params.sex,
+                        }).then(()=>'ok');
+                    }
+                }).catch(err=>this._log(chalk.bgRed(String(err))));
+            });
         });
     }
 
@@ -66,11 +82,15 @@ export class API {
      * Registers columns in the server for an event type.
      */
     public register(request: http.IncomingMessage): Promise<string> {
-        return requests.get_payload(request).then(data => {
-            var params = JSON.parse(data);
-            this._log_http(request, 'register', JSON.stringify(params));
-            return this._mongo.get_db().then(db => {
-                return 'ok';
+        return this._auth.authenticated(request).then((valid: boolean): Promise<any> => {
+            if (!valid) return Promise.resolve('ok');
+
+            return requests.get_payload(request).then(data => {
+                var params = JSON.parse(data);
+                this._log_http(request, 'register', JSON.stringify(params));
+                return this._mongo.get_db().then(db => {
+                    return 'ok';
+                });
             });
         });
     }
@@ -79,11 +99,15 @@ export class API {
      * Record a client event.
      */
     public entry(request: http.IncomingMessage): Promise<any> {
-        return requests.get_payload(request).then(data => {
-            var params = JSON.parse(data);
-            this._log_http(request, params.entry.timestamp, 'entry', params.entry_type, params.entry.event_name)//, params.entry.element_selector);
-            return this._mongo.db_insert(params.entry_type, params.entry)
-                .then(()=>'ok');
+        return this._auth.authenticated(request).then((valid: boolean): Promise<any> => {
+            if (!valid) return Promise.resolve('ok');
+
+            return requests.get_payload(request).then(data => {
+                var params = JSON.parse(data);
+                this._log_http(request, params.entry.timestamp, 'entry', params.entry_type, params.entry.event_name)//, params.entry.element_selector);
+                return this._mongo.db_insert(params.entry_type, params.entry)
+                    .then(()=>'ok');
+            });
         });
     }
 

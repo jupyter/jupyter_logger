@@ -16,6 +16,7 @@ var keyboardmanager_mod: any;
 var actions_mod: any;
 var keyboard: any;
 var keycodes: any;
+var url_base: string = 'http://127.0.0.1:8989';
 
 var _hashed_objects: number = 0;
 
@@ -75,7 +76,7 @@ var get_selector = function(el: HTMLElement): string {
  * AJAX request utility function.
  * @return Promise for the response text.
  */
-var ajax = function(url: string, method: string, parameters: any): Promise<string> {
+var ajax = function(url: string, method: string, parameters?: any): Promise<string> {
     return new Promise((resolve, reject) => {
         var xmlhttp = new XMLHttpRequest();
         xmlhttp.open(method || 'GET', url, true);
@@ -210,8 +211,14 @@ class ClientInfo {
      * Ask if the user wants to participate.
      */
     private _prompt_opt_in(): Promise<boolean> {
-        return new Promise((resolve, reject) => {
-            resolve(window.confirm('Is it okay if project Jupyter collects anonymous usage information?'));
+        return ajax(url_base + '/auth', 'GET').then(function(value) {
+            if (value==='no') {
+                return false;
+            } else {
+                return new Promise((resolve, reject) => {
+                    resolve(window.confirm('Is it okay if project Jupyter collects anonymous usage information?'));
+                });
+            }
         });
     }
 
@@ -681,7 +688,7 @@ function(
     log('Logger loaded. Connecting...');
     var config = new JupyterConfig('monitor');
     var client_info = new ClientInfo(config);
-    var backend = new MongoDBBackend(client_info, 'http://127.0.0.1:8989');
+    var backend = new MongoDBBackend(client_info, url_base);
 
     log('Creating logger: ', monitor_class.name);
     var monitor = new monitor_class(backend);
