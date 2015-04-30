@@ -16,7 +16,7 @@ var keyboardmanager_mod: any;
 var actions_mod: any;
 var keyboard: any;
 var keycodes: any;
-var url_base: string = 'http://127.0.0.1:8989';
+var url_base: string = 'http://127.0.0.1:8989/hub/logger';
 
 var _hashed_objects: number = 0;
 
@@ -162,7 +162,28 @@ class ClientInfo {
     public constructor(config: JupyterConfig) {
         this.loaded = Promise.all([
             config.get('id', guid, true).then(id => { this._id = id; }),
-            config.get('opt_in', this._prompt_opt_in, true).then(opt_in => { this._opt_in = opt_in; }),
+            config.get('opt_in', this._prompt_opt_in, true).then(opt_in => { 
+                this._opt_in = opt_in; 
+
+                // Add a recording dot.
+                if (opt_in) {
+                    $('<div/>')
+                        .css({
+                            background: '#F00',
+                            width: 10,
+                            height: 10,
+                            position: 'fixed',
+                            right: 10,
+                            top: 10,
+                            'border-radius': 5,
+                            'z-index': 9999,
+                            opacity: 0.3,
+                            border: '1px solid black'
+                        })
+                            .attr('title', 'Anonymous usage data is being collected.')
+                            .appendTo($('body'));
+                }
+            }),
         ]).then(() => {
             if (this._opt_in) {
                 return config.get('sex', this._prompt_sex, true).then(sex => { this._sex = sex; });
@@ -212,12 +233,21 @@ class ClientInfo {
      */
     private _prompt_opt_in(): Promise<boolean> {
         return ajax(url_base + '/auth', 'GET').then(function(value) {
-            if (value==='no') {
-                return false;
-            } else {
+            if (value==='yes') {
                 return new Promise((resolve, reject) => {
-                    resolve(window.confirm('Is it okay if project Jupyter collects anonymous usage information?'));
+                    require(['base/js/dialog'], function(dlg) {
+                        dlg.modal({
+                        body: 'May Project Jupyter collect anonymous Jupyter Notebook usage information?',
+                        title: 'Jupyter Notebook user study',
+                        buttons: {
+                            Yes: { click: function() { resolve(true); }, class: 'btn-primary' },
+                            No: { click: function() { resolve(false); } }
+                        }
+                    });
+                    });
                 });
+            } else {
+                return false;
             }
         });
     }
@@ -226,11 +256,8 @@ class ClientInfo {
      * Ask the user if they are a male or female.
      */
     private _prompt_sex(): Promise<string> {
-        return new Promise((resolve, reject) => {
-            var sex;
-            while ((sex = prompt('What is your gender?  (m)ale or (f)emale', 'm')) !== 'm' && sex !== 'f') {}
-            resolve(sex);
-        });
+        // No-op for now.
+        return Promise.resolve('');
     }
 }
 

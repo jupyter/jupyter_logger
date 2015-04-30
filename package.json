@@ -22,7 +22,6 @@
     "actions"
   ],
   "dependencies": {
-    "node-core-audio": "*",
     "mime": "*",
     "es6-promise": "*",
     "query-string": "*",
