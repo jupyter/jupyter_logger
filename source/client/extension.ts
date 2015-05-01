@@ -16,7 +16,7 @@ var keyboardmanager_mod: any;
 var actions_mod: any;
 var keyboard: any;
 var keycodes: any;
-var url_base: string = 'http://127.0.0.1:8989/hub/logger';
+var url_base: string;
 
 var _hashed_objects: number = 0;
 
@@ -699,35 +699,39 @@ function(
     keyboard = loaded_keyboard;
     keycodes = keyboard.keycodes;
 
-    var monitor_class;
-    if (document.getElementById("notebook")) {
-        monitor_class = NotebookMonitor;
-    } else if (document.getElementById("running")) {
-        monitor_class = TreeMonitor;
-    } else if (document.getElementById("terminado-container")) {
-        monitor_class = TerminalMonitor;
-    } else if (document.getElementById("texteditor-container")) {
-        monitor_class = EditMonitor;
-    } else {
-        return; // Don't log unknown app.
-    }
+    $.getJSON("config.json", function(data) {
+        url_base = data.url;
+        
+        var monitor_class;
+        if (document.getElementById("notebook")) {
+            monitor_class = NotebookMonitor;
+        } else if (document.getElementById("running")) {
+            monitor_class = TreeMonitor;
+        } else if (document.getElementById("terminado-container")) {
+            monitor_class = TerminalMonitor;
+        } else if (document.getElementById("texteditor-container")) {
+            monitor_class = EditMonitor;
+        } else {
+            return; // Don't log unknown app.
+        }
 
-    log('Logger loaded. Connecting...');
-    var config = new JupyterConfig('monitor');
-    var client_info = new ClientInfo(config);
-    var backend = new MongoDBBackend(client_info, url_base);
+        log('Logger loaded. Connecting...');
+        var config = new JupyterConfig('monitor');
+        var client_info = new ClientInfo(config);
+        var backend = new MongoDBBackend(client_info, url_base);
 
-    log('Creating logger: ', monitor_class.name);
-    var monitor = new monitor_class(backend);
+        log('Creating logger: ', monitor_class.name);
+        var monitor = new monitor_class(backend);
 
-    monitor.loaded.then(() => {
-        log('Connected!');
+        monitor.loaded.then(() => {
+            log('Connected!');
 
-        monitor.push(EventEntry, {
-            event_name: 'loaded',
-            triggered_by: 0,
-        })
-    }).catch((...args: any[]) => {
-        log('Error connecting...', ...args);
+            monitor.push(EventEntry, {
+                event_name: 'loaded',
+                triggered_by: 0,
+            })
+        }).catch((...args: any[]) => {
+            log('Error connecting...', ...args);
+        });
     });
 });

@@ -4,7 +4,7 @@
   "description": "Log Jupyter notebook user actions.",
   "author": "Jonathan Frederic <jon.freder@gmail.com>",
   "bin": {
-    "jupyter-logger": "./build/server/server.js"
+    "jpylogger": "./build/server/server.js"
   },
   "scripts": {
     "start": "node ./build/server/server.js",
@@ -26,6 +26,8 @@
     "es6-promise": "*",
     "query-string": "*",
     "node-getopt": "~0.2.3",
+    "chalk": "*",
+    "mongodb": "*",
     "cookies": "*"
   },
   "devDependencies": {
