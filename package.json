@@ -1,6 +1,6 @@
 {
   "name": "jupyter-logger",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Log Jupyter notebook user actions.",
   "author": "Jonathan Frederic <jon.freder@gmail.com>",
   "bin": {
