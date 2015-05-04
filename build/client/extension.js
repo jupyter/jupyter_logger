@@ -664,7 +664,8 @@ define([
     'base/js/dialog',
     'notebook/js/keyboardmanager',
     'notebook/js/actions',
-    'base/js/keyboard'], function (loaded_jquery, loaded_configmod, loaded_utils, loaded_dialog, loaded_keyboardmanager_mod, loaded_actions_mod, loaded_keyboard) {
+    'base/js/keyboard',
+    'nbextensions/logger/config'], function (loaded_jquery, loaded_configmod, loaded_utils, loaded_dialog, loaded_keyboardmanager_mod, loaded_actions_mod, loaded_keyboard, loaded_config) {
     $: loaded_jquery;
     configmod = loaded_configmod;
     utils = loaded_utils;
@@ -673,42 +674,40 @@ define([
     actions_mod = loaded_actions_mod;
     keyboard = loaded_keyboard;
     keycodes = keyboard.keycodes;
-    $.getJSON("config.json", function (data) {
-        url_base = data.url;
-        var monitor_class;
-        if (document.getElementById("notebook")) {
-            monitor_class = NotebookMonitor;
-        }
-        else if (document.getElementById("running")) {
-            monitor_class = TreeMonitor;
-        }
-        else if (document.getElementById("terminado-container")) {
-            monitor_class = TerminalMonitor;
-        }
-        else if (document.getElementById("texteditor-container")) {
-            monitor_class = EditMonitor;
-        }
-        else {
-            return; // Don't log unknown app.
-        }
-        log('Logger loaded. Connecting...');
-        var config = new JupyterConfig('monitor');
-        var client_info = new ClientInfo(config);
-        var backend = new MongoDBBackend(client_info, url_base);
-        log('Creating logger: ', monitor_class.name);
-        var monitor = new monitor_class(backend);
-        monitor.loaded.then(function () {
-            log('Connected!');
-            monitor.push(EventEntry, {
-                event_name: 'loaded',
-                triggered_by: 0,
-            });
-        }).catch(function () {
-            var args = [];
-            for (var _i = 0; _i < arguments.length; _i++) {
-                args[_i - 0] = arguments[_i];
-            }
-            log.apply(void 0, ['Error connecting...'].concat(args));
+    url_base = loaded_config.url;
+    var monitor_class;
+    if (document.getElementById("notebook")) {
+        monitor_class = NotebookMonitor;
+    }
+    else if (document.getElementById("running")) {
+        monitor_class = TreeMonitor;
+    }
+    else if (document.getElementById("terminado-container")) {
+        monitor_class = TerminalMonitor;
+    }
+    else if (document.getElementById("texteditor-container")) {
+        monitor_class = EditMonitor;
+    }
+    else {
+        return; // Don't log unknown app.
+    }
+    log('Logger loaded. Connecting...');
+    var config = new JupyterConfig('monitor');
+    var client_info = new ClientInfo(config);
+    var backend = new MongoDBBackend(client_info, url_base);
+    log('Creating logger: ', monitor_class.name);
+    var monitor = new monitor_class(backend);
+    monitor.loaded.then(function () {
+        log('Connected!');
+        monitor.push(EventEntry, {
+            event_name: 'loaded',
+            triggered_by: 0,
         });
+    }).catch(function () {
+        var args = [];
+        for (var _i = 0; _i < arguments.length; _i++) {
+            args[_i - 0] = arguments[_i];
+        }
+        log.apply(void 0, ['Error connecting...'].concat(args));
     });
 });

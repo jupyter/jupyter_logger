@@ -18,7 +18,7 @@ exports.install = function () {
         var extension_path = path.join(__dirname, '..', 'client');
         console.log(chalk.white('   client path: ' + extension_path));
         console.log(chalk.white('   writing config...'));
-        fs.writeFileSync(path.join(extension_path, 'config.json'), JSON.stringify({ url: install_url }));
+        fs.writeFileSync(path.join(extension_path, 'config.js'), 'define([], function() { return \'' + JSON.stringify({ url: install_url }) + '\'; });');
         var args = [];
         if (install_symlink)
             args.push('--symlink');
