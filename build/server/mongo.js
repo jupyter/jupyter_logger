@@ -75,6 +75,7 @@ var Mongo = (function () {
      * Connects to the db
      */
     Mongo.prototype._connect = function () {
+        var _this = this;
         if (this._connected)
             return;
         this._connected = true;
@@ -83,12 +84,12 @@ var Mongo = (function () {
         url.then(function (url) {
             MongoClient.connect(url, function (err, db) {
                 if (err) {
-                    this._connected = false;
-                    this._db_reject(err);
+                    _this._connected = false;
+                    _this._db_reject(err);
                 }
                 else {
-                    this._print("Connected to mongod");
-                    this._db_resolve(db);
+                    _this._print("Connected to mongod");
+                    _this._db_resolve(db);
                 }
             });
         });
