@@ -543,7 +543,7 @@ class NotebookMonitor extends Monitor {
     }
     
     public metadata(): any {
-        var num_cells = IPython.notebook.get_ncells();
+        var num_cells = IPython.notebook.ncells();
         var cells: [string, number][] = [];
         for (var i=0; i<num_cells; i++) {
 
