@@ -45,7 +45,7 @@ export class Mongo {
         return this.get_db().then(db => {
             var collection = db.collection(name);
             return new Promise((resolve, reject) => {           
-                collection.insert(x, function(err, res) {
+                collection.insert(x, (err, res) => {
                     if (err) {
                         reject(err);
                     } else {
@@ -69,7 +69,7 @@ export class Mongo {
         return this.get_db().then(db => {
             var collection = db.collection(name);
             return new Promise((resolve, reject) => {           
-                collection.find(x).toArray(function(err, res) {
+                collection.find(x).toArray((err, res) => {
                     if (err) {
                         reject(err);
                     } else {
@@ -90,7 +90,7 @@ export class Mongo {
         // Use connect method to connect to the Server
         this._print("Connecting to mongod...");
         url.then(url => {
-            MongoClient.connect(url, function(err, db) {
+            MongoClient.connect(url, (err, db) => {
                 if (err) {
                     this._connected = false;
                     this._db_reject(err);

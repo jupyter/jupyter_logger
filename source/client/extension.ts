@@ -93,6 +93,8 @@ var ajax = function(url: string, method: string, parameters?: any): Promise<stri
         };
         if (method === 'POST' && parameters) {
             xmlhttp.send(JSON.stringify(parameters));
+        } else {
+            xmlhttp.send();
         }
     });
 };
