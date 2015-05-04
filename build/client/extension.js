@@ -536,7 +536,7 @@ var NotebookMonitor = (function (_super) {
         _super.call(this, backend, 'notebook');
     }
     NotebookMonitor.prototype.metadata = function () {
-        var num_cells = IPython.notebook.get_ncells();
+        var num_cells = IPython.notebook.ncells();
         var cells = [];
         for (var i = 0; i < num_cells; i++) {
             var cell = IPython.notebook.get_cell(i);
