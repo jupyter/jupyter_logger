@@ -23,7 +23,7 @@ export var install = function() {
 
         console.log(chalk.white('   writing config...'));
         fs.writeFileSync(path.join(extension_path, 'config.js'), 
-            'define([], function() { return \'' + JSON.stringify({url: <any>install_url}) + '\'; });'
+            'define([], function() { return ' + JSON.stringify({url: <any>install_url}) + '; });'
         );
 
         var args: string[] = [];
