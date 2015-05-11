@@ -70,7 +70,9 @@ export class HubAuth extends noauth.NoAuth {
                                         fs.readFile(whitelist, 'utf8', (err,data) => {
                                             if (err) {
                                                 this._log('Error reading whitelist');
+                                                console.error(err);
                                                 resolve2(false);
+                                                return;
                                             }
                                             if (data.split('\n').indexOf(user) === -1) {
                                                 this._log('User ', user, ' not in whitelist');
