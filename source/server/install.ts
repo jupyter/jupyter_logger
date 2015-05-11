@@ -2,6 +2,7 @@
 // Distributed under the terms of the Modified BSD License.
 
 /// <reference path="typings/tsd.d.ts" />
+/// <reference path="typings/execsyncs.d.ts" />
 import config = require('./config');
 import chalk = require('chalk');
 import path = require('path');
