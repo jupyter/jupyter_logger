@@ -67,7 +67,7 @@ export class HubAuth extends noauth.NoAuth {
                                 whitelist.then(whitelist => {
 
                                     return new Promise((resolve2, reject2) => {
-                                        fs.readFile(whitelist, 'utf8', function (err,data) {
+                                        fs.readFile(whitelist, 'utf8', (err,data) => {
                                             if (err) {
                                                 this._log('Error reading whitelist');
                                                 resolve2(false);
