@@ -64,17 +64,17 @@ var HubAuth = (function (_super) {
                                     return new Promise(function (resolve2, reject2) {
                                         fs.readFile(whitelist, 'utf8', function (err, data) {
                                             if (err) {
-                                                this._log('Error reading whitelist');
+                                                _this._log('Error reading whitelist');
                                                 resolve2(false);
                                             }
                                             if (data.split('\n').indexOf(user) === -1) {
-                                                this._log('User ', user, ' not in whitelist');
-                                                this._cache[cookie] = false;
+                                                _this._log('User ', user, ' not in whitelist');
+                                                _this._cache[cookie] = false;
                                                 resolve(false);
                                             }
                                             else {
-                                                this._log('User ', user, ' found in whitelist');
-                                                this._cache[cookie] = user;
+                                                _this._log('User ', user, ' found in whitelist');
+                                                _this._cache[cookie] = user;
                                                 resolve(true);
                                             }
                                         });
