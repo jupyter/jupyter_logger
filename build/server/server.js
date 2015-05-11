@@ -21,7 +21,7 @@ config.parser.register('help', 'Display this help', 'h');
 Promise.all([version, port, auth, install_flag]).then(function (values) {
     version = values[0], port = values[1], auth = values[2], install_flag = values[3];
     if (version) {
-        console.log("0.1.5");
+        console.log("0.1.6");
     }
     else if (install_flag) {
         install.install();
