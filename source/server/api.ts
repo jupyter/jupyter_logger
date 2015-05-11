@@ -104,7 +104,7 @@ export class API {
 
             return requests.get_payload(request).then(data => {
                 var params = JSON.parse(data);
-                this._log_http(request, params.entry.timestamp, 'entry', params.entry_type, params.entry.event_name)//, params.entry.element_selector);
+                // this._log_http(request, params.entry.timestamp, 'entry', params.entry_type, params.entry.event_name)//, params.entry.element_selector);
                 return this._mongo.db_insert(params.entry_type, params.entry)
                     .then(()=>'ok');
             });

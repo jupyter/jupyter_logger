@@ -9,6 +9,7 @@ import http = require('http');
 import querystring = require('querystring');
 import chalk = require('chalk');
 import cookies = require('cookies');
+import fs = require('fs');
 import promise_mod = require('es6-promise');
 var Promise = promise_mod.Promise;
 
@@ -20,7 +21,7 @@ var hubapi_port = config.parser.register('hubapi_port=ARG', 'Port of the hubapi 
 var hubapi_cookie = config.parser.register('hubapi_cookie=ARG', 'Name of the cookie used by JupyterHub', undefined, 'jupyter-hub-token');
 var hubapi_token = config.parser.register('hubapi_token=ARG', 'Token for the hubapi');
 var remap_url = config.parser.register('remap_url=ARG', 'Path which the user logging extension will access', undefined, 'hub/logger');
-var whitelist = config.parser.register('whitelist=ARG+', 'Whitelist of users to log', undefined, []);
+var whitelist = config.parser.register('whitelist=ARG', 'Whitelist file, of users to log, separated by new lines.', undefined, []);
 
 export class HubAuth extends noauth.NoAuth {
     private _url: string;
@@ -44,7 +45,7 @@ export class HubAuth extends noauth.NoAuth {
             
             if (this._cache[cookie] !== undefined) {
                 if (this._cache[cookie]) {
-                    this._log('Cache autheticated as ', this._cache[cookie]);
+                    // this._log('Cache autheticated as ', this._cache[cookie]);
                     return Promise.resolve(true);
                 }
             } else {
@@ -64,16 +65,24 @@ export class HubAuth extends noauth.NoAuth {
                                 var user: string = JSON.parse(chunk)['user'].trim();
                                 this._log('Autheticated as ', user);
                                 whitelist.then(whitelist => {
-                                    if (whitelist.indexOf(user) === -1) {
-                                        this._log('User ', user, ' not in whitelist');
-                                        this._cache[cookie] = false;
-                                        resolve(false);
 
-                                    } else {
-                                        this._log('User ', user, ' found in whitelist');
-                                        this._cache[cookie] = user;
-                                        resolve(true);
-                                    }
+                                    return new Promise((resolve2, reject2) => {
+                                        fs.readFile(whitelist, 'utf8', function (err,data) {
+                                            if (err) {
+                                                this._log('Error reading whitelist');
+                                                resolve2(false);
+                                            }
+                                            if (data.split('\n').indexOf(user) === -1) {
+                                                this._log('User ', user, ' not in whitelist');
+                                                this._cache[cookie] = false;
+                                                resolve(false);
+                                            } else {
+                                                this._log('User ', user, ' found in whitelist');
+                                                this._cache[cookie] = user;
+                                                resolve(true);
+                                            }
+                                        });                                        
+                                    });
                                 });
                             });
                         });

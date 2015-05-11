@@ -1,6 +1,6 @@
 {
   "name": "jupyter-logger",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "Log Jupyter notebook user actions.",
   "author": "Jonathan Frederic <jon.freder@gmail.com>",
   "bin": {
@@ -28,7 +28,8 @@
     "node-getopt": "~0.2.3",
     "chalk": "*",
     "mongodb": "*",
-    "cookies": "*"
+    "cookies": "*",
+    "execsyncs": "*"
   },
   "devDependencies": {
     "gulp": "*",

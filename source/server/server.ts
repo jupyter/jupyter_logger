@@ -29,7 +29,7 @@ config.parser.register('help', 'Display this help', 'h');
 Promise.all([version, port, auth, install_flag]).then((values: any[]) => {
     [version, port, auth, install_flag] = values;
     if (version) {
-        console.log("0.1.5");
+        console.log("0.1.6");
     } else if (install_flag) {
         install.install();
     } else {

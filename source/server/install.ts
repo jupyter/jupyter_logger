@@ -4,9 +4,9 @@
 /// <reference path="typings/tsd.d.ts" />
 import config = require('./config');
 import chalk = require('chalk');
-import child_process = require('child_process');
 import path = require('path');
 import fs = require('fs');
+import execsyncs = require('execsyncs');
 
 var install_user = config.parser.register('install_user', 'Install for the current user');
 var install_overwrite = config.parser.register('install_overwrite', 'Overwrite existing install');
@@ -35,7 +35,12 @@ export var install = function() {
 
         var command: string = 'ipython install-nbextension ' + args.join(' ');
         console.log(chalk.white('   running install-nbextension'));
-        child_process.execSync(command);
+        execsyncs(command);
+
+        console.log(chalk.white('   activating nbextension'));
+        execsyncs(
+            `python -c "from IPython.html.services.config import ConfigManager; cm = ConfigManager(); cm.update('notebook', {'load_extensions': {'logger/extension': True}})"`
+        );
         
         console.log(chalk.green.bold('   Done'));
 
