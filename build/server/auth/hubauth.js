@@ -65,7 +65,9 @@ var HubAuth = (function (_super) {
                                         fs.readFile(whitelist, 'utf8', function (err, data) {
                                             if (err) {
                                                 _this._log('Error reading whitelist');
+                                                console.error(err);
                                                 resolve2(false);
+                                                return;
                                             }
                                             if (data.split('\n').indexOf(user) === -1) {
                                                 _this._log('User ', user, ' not in whitelist');
