@@ -550,7 +550,7 @@ class NotebookMonitor extends Monitor {
             var cell = IPython.notebook.get_cell(i);
             var type = cell.cell_type;
             var text = cell.get_text();
-            var lines = text.split('\n');
+            var lines = text.split('\n').length;
             cells.push([type, lines]);
         }
 
